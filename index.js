@@ -8,6 +8,10 @@ app.get("/scrape", (req, res) => {
   scrapeLogic(res);
 });
 
+app.get("/google", (req, res) => {
+  scrapeLogic(res);
+});
+
 app.get("/", (req, res) => {
   res.send("Render Puppeteer server is up and running!");
 });
