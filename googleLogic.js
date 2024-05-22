@@ -1,9 +1,7 @@
 const puppeteer = require("puppeteer");
-const cheerio = require("cheerio");
-
 require("dotenv").config();
 
-const googleLogic = async (res) => {
+const scrapeLogic = async (res) => {
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
@@ -17,135 +15,80 @@ const googleLogic = async (res) => {
         : puppeteer.executablePath(),
   });
   try {
-		const start = Date.now()
+    const page = await browser.newPage()
 
-		const page = await browser.newPage()
-
-		const query = 'sneakers shop london'
-
-		try {
-			await page.goto(
-				`https://www.google.com/maps/search/${query
-					.split(' ')
-					.join('+')}`
-			)
-		} catch (error) {
-			console.log('error going to page')
+await page
+	.goto(
+		'https://www.amazon.com/s?k=macbook+pro&i=todays-deals&crid=3TOXWO4U7EQ9V&sprefix=macbook+pro%2Ctodays-deals%2C374&ref=nb_sb_noss_1',
+		{
+			waitUntil: 'domcontentloaded',
+			timeout: 100000000
 		}
+	)
+	.catch((err) => console.log('error loading url', err))
+const localStorageData = await page.evaluate(() => {
+	let json = {}
+	let fetchedLocalStorage = {
+		vse_brila_cc_status: 'disabled',
+		SA_Attribution_Cache: '{"html":{},"native":{"Android":{},"iPhone":{}}}',
+		SA_StatefulSA: '[]',
+		amznfbgid: 'X75-4252134-1727391:1715954865',
+		'csa-ctoken-01A3FJ2SYMY9FZX2HMWG': '1715959032299',
+		'csa-ctoken-VK7YEBV6KTCZYSFCEV3M': '1715958471573',
+		'csa-ctoken-DGHGDTGSRVGAR97QSV0J': '1715959014848',
+		'csm-hit':
+			'tb:7NB232Q2Q5VRPAV15A3T+s-785QWFG26KA5KRCJ8E9D|1715957373709&t:1715957373709&adb:adblk_no',
+		'awa:webapp:sessioninfo':
+			'{"isWebApp":false,"timeStamp":1715955417256}',
+		sa_fetch_window_config:
+			'{"5":{"windowStartTime":1715955438232,"count":1},"10":{"windowStartTime":1715955438232,"count":1},"15":{"windowStartTime":1715955438232,"count":1},"30":{"windowStartTime":1715955438232,"count":1},"60":{"windowStartTime":1715955438232,"count":1}}',
+		'a-font-class': 'a-ember',
+		'csm-bf':
+			'["785QWFG26KA5KRCJ8E9D","01A3FJ2SYMY9FZX2HMWG","DGHGDTGSRVGAR97QSV0J","7NB232Q2Q5VRPAV15A3T","1WDSJW7H39JY5N98SW6B","VK7YEBV6KTCZYSFCEV3M","CGED0SQHRBJF7QSJP9DT"]',
+		'csa-ctoken-7NB232Q2Q5VRPAV15A3T': '1715958552280',
+		current_lop: 'en_US',
+		'csa-tabbed-browsing':
+			'{"lastActive":{"visible":true,"pid":"tmpxlo-khfeam-czbuhn-r6598t","tid":"hwk344-z2wj9f-i5z4zk-dwll2f","ent":{"rid":"785QWFG26KA5KRCJ8E9D","ety":"Detail","esty":"Glance"}},"lastInteraction":{"id":"6ipr38-8mqeh9-aldig3-p9wpbv","used":true},"time":1715955612949}',
+		'csa-ctoken-CGED0SQHRBJF7QSJP9DT': '1715958453455',
+		'puff:suppression':
+			'{"136-0265724-8207131":{"disabled":false,"suppressUntil":"2024-05-17T15:07:43.803Z","suppressionMessage":"Customer is unrecognized"}}',
+		'csm:adb': 'adblk_no',
+		'csa-ctoken-785QWFG26KA5KRCJ8E9D': '1715959212918',
+		SA_Cache:
+			'{"version":"1.0","TTL":1716041837486,"sessionDayImpressionCount":{},"anchorGroups":{},"context":{"cookies":{"session-id":"136-0265724-8207131","x-main":"unknown","lc-main":"unknown","ubid-main":"132-9016527-8595301"}},"detailpage":{"shoppingAidsList":{"MultiPageShoppingAids":{"data":{},"priorityList":[]},"Hotspots":{"data":{},"priorityList":[]},"Sparkles":{"data":{"AADeeplinkingDetailPageT2":{"identifier":"AADeeplinkingDetailPageT2","displayText":"Open","borderColor":"none","sequenceNum":1,"targetEndpoint":"https://dl.amazon.com/redirect/ref=mm_1_aa_dl_dp_t2?campaignId=M0Ybl5&failureMode=AppStore&url=https%3A%2F%2Fwww.amazon.com%2Fsa-request-url","weblabTriggerOnlyFlag":false,"descriptionColor":"#111","descriptionText":"Open this page in the Amazon app","maxOptOutCount":3,"impressionInterval":2,"typeOfStaticSparkle":"4","clientSideTargetting":"url contains aa_maas","displayIcon":"https://m.media-amazon.com/images/G/01/MaaS-QRCBT/Deeplinking/AmazonShopping-icon.svg","backGroundColor":"#eaeded","maxDisplayCount":100,"bottomNavPadding":"0","borderStyle":"none","invokingEventElement":":root","sparkleType":"static"}},"priorityList":["AADeeplinkingDetailPageT2"]},"Audiospots":{"data":{},"priorityList":[]},"ToolTips":{"data":{"TANDEM_JIT_QTIP_EN_US_MOBILE":{"sequenceNum":10,"elementBorderColor":"#FFA724","weblabTriggerOnlyFlag":false,"elementWidth":390,"elementArrowPosition":"bottommiddle","elementTextColor":"#000000","elementAnchor":"#audiblesampleplayer_mobile","elementDuration":12000,"dismissalButtonText":"userCross","elementBounceDuration":9000,"highlighter":false,"elementDisplayType":"HTML","userState":"ANY","maxDisplayCount":3,"elementHeight":80,"elementValue":"This audiobook uses virtual voice. Try it out by listening to a sample.","anchorGroupImpressionInterval":24,"dismissalType":"userCross","invokingEventElement":"#audiblesampleplayer_mobile","identifier":"TANDEM_JIT_QTIP_EN_US_MOBILE","tipType":"tool_tip","elementBackgroundColor":"#FFA724","impressionInterval":24,"elementStartOffset":0,"scrollToAnchor":false,"elementType":"TEXT"}},"priorityList":["TANDEM_JIT_QTIP_EN_US_MOBILE"]},"BottomSheets":{"data":{},"priorityList":[]}},"TTL":{"expFactor":0,"validTill":1715955438231}}}',
+		'csa-ctoken-1WDSJW7H39JY5N98SW6B': '1715958500204'
+	}
+	for (let a in fetchedLocalStorage) {
+		if (!fetchedLocalStorage.hasOwnProperty(a)) continue
 
-		async function autoScroll(page) {
-			await page.evaluate(async () => {
-				const wrapper = document.querySelector('div[role="feed"]')
+		localStorage.setItem(a, fetchedLocalStorage[a])
+	}
 
-				await new Promise((resolve, reject) => {
-					var totalHeight = 0
-					var distance = 1000
-					var scrollDelay = 3000
+	for (let i = 0; i < localStorage.length; i++) {
+		const key = localStorage.key(i)
+		json[key] = localStorage.getItem(key)
+	}
+	return json
+})
 
-					var timer = setInterval(async () => {
-						var scrollHeightBefore = wrapper.scrollHeight
-						wrapper.scrollBy(0, distance)
-						totalHeight += distance
+await page.evaluate(() => {
+	location.reload(true)
+})
+let textSelector = await page.waitForSelector('.s-title-instructions-style')
+let fullTitle = await textSelector?.evaluate((el) => el.textContent)
 
-						if (totalHeight >= scrollHeightBefore) {
-							totalHeight = 0
-							await new Promise((resolve) =>
-								setTimeout(resolve, scrollDelay)
-							)
-
-							// Calculate scrollHeight after waiting
-							var scrollHeightAfter = wrapper.scrollHeight
-
-							if (scrollHeightAfter > scrollHeightBefore) {
-								// More content loaded, keep scrolling
-								return
-							} else {
-								// No more content loaded, stop scrolling
-								clearInterval(timer)
-								resolve()
-							}
-						}
-					}, 200)
-				})
-			})
-		}
-
-		await autoScroll(page)
-
-		const html = await page.content()
-		const pages = await browser.pages()
-		await Promise.all(pages.map((page) => page.close()))
-
-		await browser.close()
-		console.log('browser closed')
-
-		// get all a tag parent where a tag href includes /maps/place/
-		const $ = cheerio.load(html)
-		const aTags = $('a')
-		const parents = []
-		aTags.each((i, el) => {
-			const href = $(el).attr('href')
-			if (!href) {
-				return
-			}
-			if (href.includes('/maps/place/')) {
-				parents.push($(el).parent())
-			}
-		})
-
-		console.log('parents', parents.length)
-
-		const buisnesses = []
-
-		parents.forEach((parent) => {
-			const url = parent.find('a').attr('href')
-			// get a tag where data-value="Website"
-			const website = parent.find('a[data-value="Website"]').attr('href')
-			// find a div that includes the class fontHeadlineSmall
-			const storeName = parent.find('div.fontHeadlineSmall').text()
-			// find span that includes class fontBodyMedium
-			const ratingText = parent
-				.find('span.fontBodyMedium > span')
-				.attr('aria-label')
-
-			// get the first div that includes the class fontBodyMedium
-			const bodyDiv = parent.find('div.fontBodyMedium').first()
-			const children = bodyDiv.children()
-			const lastChild = children.last()
-			const firstOfLast = lastChild.children().first()
-			const lastOfLast = lastChild.children().last()
-
-			buisnesses.push({
-				placeId: `ChI${url?.split('?')?.[0]?.split('ChI')?.[1]}`,
-				address: firstOfLast?.text()?.split('·')?.[1]?.trim(),
-				category: firstOfLast?.text()?.split('·')?.[0]?.trim(),
-				phone: lastOfLast?.text()?.split('·')?.[1]?.trim(),
-				googleUrl: url,
-				bizWebsite: website,
-				storeName,
-				ratingText,
-				stars: ratingText?.split('stars')?.[0]?.trim()
-					? Number(ratingText?.split('stars')?.[0]?.trim())
-					: null,
-				numberOfReviews: ratingText
-					?.split('stars')?.[1]
-					?.replace('Reviews', '')
-					?.trim()
-					? Number(
-							ratingText
-								?.split('stars')?.[1]
-								?.replace('Reviews', '')
-								?.trim()
-					  )
-					: null
-			})
-		})
-		const end = Date.now()
-
-		console.log(`time in seconds ${Math.floor((end - start) / 1000)}`)
-
-		res.send(JSON.stringify(buisnesses))
-	} catch (e) {
+const searchedResult = await page.evaluate(() => {
+	let amazonProduct = []
+	let allProducts = [
+		...document.querySelectorAll('.s-title-instructions-style')
+	]
+	allProducts.forEach((product) => {
+		amazonProduct.push(product.innerText)
+	})
+	return amazonProduct
+})
+    res.send(searchedResult);
+  } catch (e) {
     console.error(e);
     res.send(`Something went wrong while running Puppeteer: ${e}`);
   } finally {
@@ -153,4 +96,4 @@ const googleLogic = async (res) => {
   }
 };
 
-module.exports = { googleLogic };
+module.exports = { scrapeLogic };
