@@ -1,4 +1,6 @@
 const puppeteer = require("puppeteer");
+const cheerio = require("cheerio");
+
 require("dotenv").config();
 
 const googleLogic = async (res) => {
