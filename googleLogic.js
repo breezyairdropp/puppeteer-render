@@ -1,7 +1,7 @@
 const puppeteer = require("puppeteer");
 require("dotenv").config();
 
-const scrapeLogic = async (res) => {
+const googleLogic = async (res) => {
   const browser = await puppeteer.launch({
     args: [
       "--disable-setuid-sandbox",
@@ -96,4 +96,4 @@ const searchedResult = await page.evaluate(() => {
   }
 };
 
-module.exports = { scrapeLogic };
+module.exports = { googleLogic };
