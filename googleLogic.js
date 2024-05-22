@@ -1,11 +1,10 @@
 const cheerio = require("cheerio");
-const puppeteerExtra = require("puppeteer-extra");
+const puppeteer = require("puppeteer-extra");
 const stealthPlugin = require("puppeteer-extra-plugin-stealth");
 require("dotenv").config();
 
-
 const googleLogic = async (res) => {
-    const browser = await puppeteerExtra.launch({
+    const browser = await puppeteer.launch({
         // headless: true,
         args: [
             "--disable-setuid-sandbox",
@@ -20,7 +19,7 @@ const googleLogic = async (res) => {
     });
     try {
 
-		puppeteerExtra.use(stealthPlugin())
+		puppeteer.use(stealthPlugin())
 
 		const page = await browser.newPage()
 
