@@ -144,7 +144,8 @@ const googleLogic = async (res) => {
 					: null
 			})
 		})
-        res.send(JSON.stringify(buisnesses));
+        // res.send(JSON.stringify(buisnesses));
+        res.send(buisnesses);
 
 	} catch (e) {
         console.error(e);
