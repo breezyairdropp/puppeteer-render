@@ -215,8 +215,9 @@ const leadsGeneration = async (res) => {
             parsedData[url?.index].bizWebsite = website
             parsedData[url?.index].phone = phone
             // console.log(url?.index, website, phone)
-            res.send(parsedData);
-    
+           // res.send(parsedData);
+
+		res.send(JSON.stringify(parsedData))
             // fs.writeFileSync(`./new-modified.json`, JSON.stringify(parsedData))
         })
     
