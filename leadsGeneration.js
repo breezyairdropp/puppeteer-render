@@ -13,7 +13,7 @@ function extract2(string) {
 
 const leadsGeneration = async (res) => {
 
-let parsedData = 'oil company austin'
+let parsedData = 'auto repair shop austin'
 
 	async function getWebsite(parsedDataCheck) {
 		const cluster = await Cluster.launch({
