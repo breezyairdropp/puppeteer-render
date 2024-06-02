@@ -11,7 +11,7 @@ let query = 'oil company austin';
 const leadsGeneration = async (res) => {
     
     try {
-		puppeteerExtra.use(stealthPlugin())
+		puppeteer.use(stealthPlugin())
 
 		const browser = await puppeteer.launch({
             // headless: true,
