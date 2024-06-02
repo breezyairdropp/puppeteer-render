@@ -8,6 +8,11 @@ require("dotenv").config();
 
 let query = 'oil company austin';
 
+function extract2(string) {
+	var regex = /[^0-9-+() ]/g
+	return !regex.test(string)
+}
+
 const leadsGeneration = async (res) => {
     
     try {
