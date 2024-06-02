@@ -7,7 +7,7 @@ const fs = require('fs')
 require("dotenv").config();
 
 let query = 'Auto repair shops austin';
-
+let buisnesses = []
 function extract2(string) {
 	var regex = /[^0-9-+() ]/g
 	return !regex.test(string)
@@ -106,7 +106,7 @@ const leadsGeneration = async (res) => {
 			}
 		})
 
-		const buisnesses = []
+		
 
 		let indexCount = -1
 		parents.forEach((parent) => {
