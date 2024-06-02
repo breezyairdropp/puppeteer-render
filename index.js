@@ -1,6 +1,7 @@
 const express = require("express");
 const { scrapeLogic } = require("./scrapeLogic");
 const { googleLogic } = require("./googleLogic");
+const { leadsGeneration } = require("./leadsGeneration");
 
 const app = express();
 
@@ -11,6 +12,10 @@ app.get("/scrape", (req, res) => {
 });
 
 app.get("/google", (req, res) => {
+  googleLogic(res);
+});
+
+app.get("/leads", (req, res) => {
   googleLogic(res);
 });
 
