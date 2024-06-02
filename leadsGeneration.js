@@ -164,7 +164,11 @@ const leadsGeneration = async (res) => {
         res.send(`Something went wrong while running Puppeteer: ${e}`);
       } finally {
         await browser.close();
-      }async function getWebsite(parsedData) {
+      }
+	
+	
+	
+	async function getWebsite(parsedData) {
         const cluster = await Cluster.launch({
             concurrency: Cluster.CONCURRENCY_CONTEXT,
             workerCreationDelay: 2000,
