@@ -168,7 +168,8 @@ const leadsGeneration = async (res) => {
         console.error(e);
         res.send(`Something went wrong while running Puppeteer: ${e}`);
       } finally {
-        await browser.close();
+        //await browser.close();
+	    console.log('me')
       }
 	
 	
