@@ -6,25 +6,89 @@ const fs = require('fs')
 
 require("dotenv").config();
 
-
-const leadsGeneration = async (res) => {
-    
-    function extract2(string) {
+function extract2(string) {
 	var regex = /[^+0-9-()  ]/g
 	return !regex.test(string)
 }
 
-searchGoogleMaps('oil company austin')
-// sneakers shop london
-// const query = 'Auto repair shops austin'
-// const query = 'eatery uyo akwa ibom'
-// const query = 'eatery abuja'
+const leadsGeneration = async (res) => {
 
-async function searchGoogleMaps(parsedData) {
+let parsedData = 'oil company austin'
+
+	async function getWebsite(parsedDataCheck) {
+		const cluster = await Cluster.launch({
+			concurrency: Cluster.CONCURRENCY_CONTEXT,
+			workerCreationDelay: 2000,
+			puppeteerOptions: {
+				args: ['--no-sandbox', '--disable-setuid-sandbox']
+			},
+			maxConcurrency: 10
+		})
+
+		let newFind = []
+
+		await cluster.task(async ({ page, data: url }) => {
+			await page.goto(url?.url)
+
+			const html = await page.content()
+
+			const $ = cheerio.load(html)
+			const aTags = $('div.RcCsl')
+			let website
+			let phone
+			let data
+			aTags.each((i, el) => {
+				data = $(el)
+				data
+					?.find('button.CsEnBe')
+					?.attr('aria-label')
+					?.toLowerCase()
+					?.includes('phone:') == true
+					? (phone = data?.find('.fontBodyMedium.kR99db')?.text())
+					: null
+
+				data
+					?.find('a.CsEnBe')
+					?.attr('aria-label')
+					?.toLowerCase()
+					?.includes('website:') == true
+					? (website = data?.find('a.CsEnBe')?.attr('href'))
+					: null
+			})
+
+			newFind.push({
+				index: url.index,
+				website: website,
+				phone: phone
+			})
+			// console.log(url.index, website, phone)
+		})
+
+		JSON.parse(parsedDataCheck).forEach((data) => {
+			if (
+				data?.phone == '' ||
+				data?.bizWebsite == undefined ||
+				data?.bizWebsite.includes('http') == false
+			) {
+				cluster.queue({
+					index: data?.index,
+					title: data?.storeName,
+					url: data?.googleUrl
+				})
+			}
+		})
+
+		await cluster.idle()
+		await cluster.close()
+		res.send(newFind)
+		// console.log(newFind)
+		fs.writeFileSync(`./newFind.json`, JSON.stringify(newFind))
+	}
+
 	try {
-		puppeteerExtra.use(stealthPlugin())
+		puppeteer.use(stealthPlugin())
 
-		const browser = await puppeteerExtra.launch({
+		const browser = await puppeteer.launch({
 			headless: true,
 			args: ['--no-sandbox'],
 			executablePath: ''
@@ -157,75 +221,15 @@ async function searchGoogleMaps(parsedData) {
 			})
 		})
 
-		res.send(businesses)
+		getWebsite(JSON.stringify(buisnesses))
 
-		//getWebsite(JSON.stringify(buisnesses))
+		fs.writeFileSync(`./${parsedData}.json`, JSON.stringify(buisnesses))
 
+		// getCompleteData(JSON.stringify(buisnesses))
 	} catch (error) {
 		console.log('error at googleMaps', error.message)
 	}
 }
 
-async function getWebsite(parsedData) {
-	const cluster = await Cluster.launch({
-		concurrency: Cluster.CONCURRENCY_CONTEXT,
-		workerCreationDelay: 2000,
-		puppeteerOptions: {
-			args: ['--no-sandbox', '--disable-setuid-sandbox']
-		},
-		maxConcurrency: 10
-	})
+module.exports = { leadsGeneration }
 
-	await cluster.task(async ({ page, data: url }) => {
-		await page.goto(url?.url)
-
-		const html = await page.content()
-
-		const $ = cheerio.load(html)
-		const aTags = $('div.RcCsl')
-		let website
-		let phone
-		let data
-		aTags.each((i, el) => {
-			data = $(el)
-			data
-				?.find('button.CsEnBe')
-				?.attr('aria-label')
-				?.toLowerCase()
-				?.includes('phone:') == true
-				? (phone = data?.find('.fontBodyMedium.kR99db')?.text())
-				: null
-
-			data
-				?.find('a.CsEnBe')
-				?.attr('aria-label')
-				?.toLowerCase()
-				?.includes('website:') == true
-				? (website = data?.find('a.CsEnBe')?.attr('href'))
-				: null
-		})
-
-		console.log(url.index, website, phone)
-	})
-
-	JSON.parse(parsedData).forEach((data) => {
-		if (
-			data?.phone == '' ||
-			data?.bizWebsite == undefined ||
-			data?.bizWebsite.includes('http') == false
-		) {
-			cluster.queue({
-				index: data?.index,
-				title: data?.storeName,
-				url: data?.googleUrl
-			})
-		}
-	})
-	await cluster.idle()
-	await cluster.close()
-}
-
-
-};
-
-module.exports = { leadsGeneration };
