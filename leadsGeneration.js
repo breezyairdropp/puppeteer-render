@@ -6,7 +6,7 @@ const fs = require('fs')
 
 require("dotenv").config();
 
-let query = 'oil company austin';
+let query = 'Auto repair shops austin';
 
 function extract2(string) {
 	var regex = /[^0-9-+() ]/g
