@@ -6,34 +6,32 @@ const fs = require('fs')
 
 require("dotenv").config();
 
-let query = 'Auto repair shops austin';
-let buisnesses = []
-function extract2(string) {
-	var regex = /[^0-9-+() ]/g
-	return !regex.test(string)
-}
 
 const leadsGeneration = async (res) => {
     
-    try {
-		puppeteer.use(stealthPlugin())
+    function extract2(string) {
+	var regex = /[^+0-9-()  ]/g
+	return !regex.test(string)
+}
 
-		const browser = await puppeteer.launch({
-            // headless: true,
-            args: [
-                "--disable-setuid-sandbox",
-                "--no-sandbox",
-                "--single-process",
-                "--no-zygote",
-              ],
-              executablePath:
-                process.env.NODE_ENV === "production"
-                  ? process.env.PUPPETEER_EXECUTABLE_PATH
-                  : puppeteer.executablePath(),
-        });
+searchGoogleMaps('oil company austin')
+// sneakers shop london
+// const query = 'Auto repair shops austin'
+// const query = 'eatery uyo akwa ibom'
+// const query = 'eatery abuja'
+
+async function searchGoogleMaps(parsedData) {
+	try {
+		puppeteerExtra.use(stealthPlugin())
+
+		const browser = await puppeteerExtra.launch({
+			headless: true,
+			args: ['--no-sandbox'],
+			executablePath: ''
+		})
 
 		const page = await browser.newPage()
-		const query = 'oil company austin'
+		const query = parsedData
 
 		try {
 			await page.goto(
@@ -106,7 +104,7 @@ const leadsGeneration = async (res) => {
 			}
 		})
 
-		
+		const buisnesses = []
 
 		let indexCount = -1
 		parents.forEach((parent) => {
@@ -158,88 +156,74 @@ const leadsGeneration = async (res) => {
 					: null
 			})
 		})
-	    res.send(businesses)
 
-		getWebsite(buisnesses)
+		res.send(businesses)
 
-		// fs.writeFileSync(`./${parsedData}.json`, JSON.stringify(buisnesses))
-        // res.send(buisnesses);
+		//getWebsite(JSON.stringify(buisnesses))
 
-	} catch (e) {
-        console.error(e);
-        res.send(`Something went wrong while running Puppeteer: ${e}`);
-      } finally {
-        //await browser.close();
-	    console.log('me')
-      }
-	
-	
-	
-	async function getWebsite(parsedData) {
-        const cluster = await Cluster.launch({
-            concurrency: Cluster.CONCURRENCY_CONTEXT,
-            workerCreationDelay: 2000,
-            puppeteerOptions: {
-                args: ['--no-sandbox', '--disable-setuid-sandbox']
-            },
-            maxConcurrency: 10
-        })
-    
-        await cluster.task(async ({ page, data: url }) => {
-            await page.goto(url?.url)
-    
-            const html = await page.content()
-    
-            const $ = cheerio.load(html)
-            const aTags = $('div.RcCsl')
-            let website
-            let phone
-            let data
-            aTags.each((i, el) => {
-                data = $(el)
-                data
-                    ?.find('button.CsEnBe')
-                    ?.attr('aria-label')
-                    ?.toLowerCase()
-                    ?.includes('phone:') == true
-                    ? (phone = data?.find('.fontBodyMedium.kR99db')?.text())
-                    : null
-    
-                data
-                    ?.find('a.CsEnBe')
-                    ?.attr('aria-label')
-                    ?.toLowerCase()
-                    ?.includes('website:') == true
-                    ? (website = data?.find('a.CsEnBe')?.attr('href'))
-                    : null
-            })
-    
-            parsedData[url?.index].bizWebsite = website
-            parsedData[url?.index].phone = phone
-            // console.log(url?.index, website, phone)
-           // res.send(parsedData);
+	} catch (error) {
+		console.log('error at googleMaps', error.message)
+	}
+}
 
-		res.send(parsedData)
-            // fs.writeFileSync(`./new-modified.json`, JSON.stringify(parsedData))
-        })
-    
-        parsedData.forEach((data) => {
-            if (
-                data?.phone == '' ||
-                data?.bizWebsite == undefined ||
-                data?.bizWebsite.includes('http') == false
-            ) {
-                cluster.queue({
-                    index: data?.index,
-                    title: data?.storeName,
-                    url: data?.googleUrl
-                })
-            }
-        })
-        await cluster.idle()
-        await cluster.close()
-    }
-    
+async function getWebsite(parsedData) {
+	const cluster = await Cluster.launch({
+		concurrency: Cluster.CONCURRENCY_CONTEXT,
+		workerCreationDelay: 2000,
+		puppeteerOptions: {
+			args: ['--no-sandbox', '--disable-setuid-sandbox']
+		},
+		maxConcurrency: 10
+	})
+
+	await cluster.task(async ({ page, data: url }) => {
+		await page.goto(url?.url)
+
+		const html = await page.content()
+
+		const $ = cheerio.load(html)
+		const aTags = $('div.RcCsl')
+		let website
+		let phone
+		let data
+		aTags.each((i, el) => {
+			data = $(el)
+			data
+				?.find('button.CsEnBe')
+				?.attr('aria-label')
+				?.toLowerCase()
+				?.includes('phone:') == true
+				? (phone = data?.find('.fontBodyMedium.kR99db')?.text())
+				: null
+
+			data
+				?.find('a.CsEnBe')
+				?.attr('aria-label')
+				?.toLowerCase()
+				?.includes('website:') == true
+				? (website = data?.find('a.CsEnBe')?.attr('href'))
+				: null
+		})
+
+		console.log(url.index, website, phone)
+	})
+
+	JSON.parse(parsedData).forEach((data) => {
+		if (
+			data?.phone == '' ||
+			data?.bizWebsite == undefined ||
+			data?.bizWebsite.includes('http') == false
+		) {
+			cluster.queue({
+				index: data?.index,
+				title: data?.storeName,
+				url: data?.googleUrl
+			})
+		}
+	})
+	await cluster.idle()
+	await cluster.close()
+}
 
 
 };
