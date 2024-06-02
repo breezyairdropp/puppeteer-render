@@ -26,7 +26,7 @@ const googleLogic = async (res) => {
 		// const query = 'Auto repair shops austin'
 		// const query = "eatery uyo akwa ibom";
 		// const query = 'sneakers shop london'
-	    	const query = 'hospital in belfast'
+	    	const query = 'oil company austin'
 
 		try {
 			await page.goto(
