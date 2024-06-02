@@ -16,7 +16,7 @@ app.get("/google", (req, res) => {
 });
 
 app.get("/leads", (req, res) => {
-  googleLogic(res);
+  leadsGeneration(res);
 });
 
 app.get("/", (req, res) => {
