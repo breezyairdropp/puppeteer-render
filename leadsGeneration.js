@@ -158,6 +158,7 @@ const leadsGeneration = async (res) => {
 					: null
 			})
 		})
+	    res.send(businesses)
 
 		getWebsite(buisnesses)
 
@@ -218,7 +219,7 @@ const leadsGeneration = async (res) => {
             // console.log(url?.index, website, phone)
            // res.send(parsedData);
 
-		res.send(JSON.stringify(parsedData))
+		res.send(parsedData)
             // fs.writeFileSync(`./new-modified.json`, JSON.stringify(parsedData))
         })
     
