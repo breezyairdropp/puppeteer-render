@@ -82,7 +82,7 @@ let parsedData = 'oil company austin'
 		await cluster.close()
 		res.send(newFind)
 		// console.log(newFind)
-		fs.writeFileSync(`./newFind.json`, JSON.stringify(newFind))
+		// fs.writeFileSync(`./newFind.json`, JSON.stringify(newFind))
 	}
 
 	try {
@@ -223,7 +223,7 @@ let parsedData = 'oil company austin'
 
 		getWebsite(JSON.stringify(buisnesses))
 
-		fs.writeFileSync(`./${parsedData}.json`, JSON.stringify(buisnesses))
+		// fs.writeFileSync(`./${parsedData}.json`, JSON.stringify(buisnesses))
 
 		// getCompleteData(JSON.stringify(buisnesses))
 	} catch (error) {
