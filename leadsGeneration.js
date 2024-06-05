@@ -11,9 +11,9 @@ function extract2(string) {
 	return !regex.test(string)
 }
 
-const leadsGeneration = async (res) => {
-
-let parsedData = 'auto repair shop austin'
+const leadsGeneration = async (req, res) => {
+	console.log(req?.query?.search)
+	let parsedData = req?.query?.search
 
 	async function getWebsite(parsedDataCheck) {
 		const cluster = await Cluster.launch({
@@ -80,7 +80,7 @@ let parsedData = 'auto repair shop austin'
 
 		await cluster.idle()
 		await cluster.close()
-		res.send(newFind)
+		// res.send(newFind)
 		// console.log(newFind)
 		// fs.writeFileSync(`./newFind.json`, JSON.stringify(newFind))
 	}
@@ -89,18 +89,10 @@ let parsedData = 'auto repair shop austin'
 		puppeteer.use(stealthPlugin())
 
 		const browser = await puppeteer.launch({
-        // headless: true,
-        args: [
-            "--disable-setuid-sandbox",
-            "--no-sandbox",
-            "--single-process",
-            "--no-zygote",
-          ],
-          executablePath:
-            process.env.NODE_ENV === "production"
-              ? process.env.PUPPETEER_EXECUTABLE_PATH
-              : puppeteer.executablePath(),
-    });
+			headless: true,
+			args: ['--no-sandbox'],
+			executablePath: ''
+		})
 
 		const page = await browser.newPage()
 		const query = parsedData
@@ -229,7 +221,9 @@ let parsedData = 'auto repair shop austin'
 			})
 		})
 
-		getWebsite(JSON.stringify(buisnesses))
+		res.send(buisnesses)
+
+		// getWebsite(JSON.stringify(buisnesses))
 
 		// fs.writeFileSync(`./${parsedData}.json`, JSON.stringify(buisnesses))
 
@@ -240,4 +234,5 @@ let parsedData = 'auto repair shop austin'
 }
 
 module.exports = { leadsGeneration }
+
 
