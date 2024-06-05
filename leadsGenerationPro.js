@@ -78,9 +78,10 @@ const leadsGenerationPro = async (req, res) => {
 			}
 		})
 
+		res.send(newFind)
 		await cluster.idle()
 		await cluster.close()
-		res.send(newFind)
+		
 		// fs.writeFileSync(`./newFind.json`, JSON.stringify(newFind))
 	}
 
